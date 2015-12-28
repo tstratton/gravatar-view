@@ -1,0 +1,49 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type='text/javascript' src='webtoolkit.md5.js'></script>
+<script type="text/javascript" src="zepto.min.js"></script>
+<script type='text/javascript' >
+
+function fixString(str) {
+    return MD5($.trim(str.toLowerCase()));
+}
+
+function lookup() {
+    var base = "<img src='http://www.gravatar.com/avatar/"
+    var type = ['default', 'mm','identicon','monsterid','wavatar', 'retro'];
+    var str = [];
+    var i
+    for (i in type) {
+        str.push(type[i]);
+        str.push("<br>\n");
+        str.push(base);
+        str.push($("#hash").val());
+        if (type[i] !== 'default') {
+            str.push("?d=");
+            str.push(type[i]);
+            str.push("&f=y");
+        }
+        str.push("'><br>\n");
+    }
+    $("#result").html(str.join(''));
+}
+</script>
+</head>
+<body>
+<h3>View Gravatars for an email address.</h3>
+<p>
+<a href="http://en.gravatar.com/site/implement/images/">more info here</a>
+</p>
+<form action="">
+Email Address: 
+<input type="text" name="decoded" value="" onkeyup="this.form.hash.value = fixString(this.form.decoded.value)" style="width: 336px;">
+<p></p>
+Calculated MD5 hash:
+<input type="text" id='hash' name="hash" value="" style="width: 336px;">
+<p></p>
+<input type="button" name='go' value='lookup Gravatars' onclick="lookup()">
+</form>
+<div id='result'></div>
+</body>
+</html>
