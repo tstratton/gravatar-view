@@ -9,31 +9,43 @@ function fixString(str) {
     return MD5($.trim(str.toLowerCase()));
 }
 
+// basic printf modified from http://stackoverflow.com/a/4673436
+function printf(format) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return format.replace(/{(\d+)}/g, function(match, number) { 
+        return typeof args[number] != 'undefined' ? args[number] : match;
+    });
+}
+
 function lookup() {
-    var base = "<img src='http://www.gravatar.com/avatar/"
-    var type = ['default', 'mm','identicon','monsterid','wavatar', 'retro'];
+    var imgfmt = "{0}<br><img src='{1}'><br>";
+    var gravatarUrlFmt = "https://www.gravatar.com/avatar/{0}/?d={1}&f=y&s=150";
+    var robohashUrlFmt = "https://robohash.org/{0}.png?set={1}&size=150x150";
+    var type = [
+                [gravatarUrlFmt, 'mm'],
+                [gravatarUrlFmt, 'identicon'],
+                [gravatarUrlFmt, 'monsterid'],
+                [gravatarUrlFmt, 'wavatar'],
+                [gravatarUrlFmt, 'retro'],
+                [robohashUrlFmt, 'set1'],
+                [robohashUrlFmt, 'set2'],
+                [robohashUrlFmt, 'set3']
+            ];
     var str = [];
-    var i
+    var i;
     for (i in type) {
-        str.push(type[i]);
-        str.push("<br>\n");
-        str.push(base);
-        str.push($("#hash").val());
-        if (type[i] !== 'default') {
-            str.push("?d=");
-            str.push(type[i]);
-            str.push("&f=y");
-        }
-        str.push("'><br>\n");
+        var url = printf(type[i][0], $("#hash").val(), type[i][1]);
+        str.push(printf(imgfmt, type[i][1], url));
     }
-    $("#result").html(str.join(''));
+    $("#result").html(str.join('\n'));
 }
 </script>
 </head>
 <body>
-<h3>View Gravatars for an email address.</h3>
+<h3>View Gravatars and Robohashes for an MD5 hash of an email address.</h3>
 <p>
-<a href="http://en.gravatar.com/site/implement/images/">more info here</a>
+more info <a href="http://en.gravatar.com/site/implement/images/">here for gravatar</a>
+ and <a href="https://robohash.org/">here for robohash</a>
 </p>
 <form action="">
 Email Address: 
@@ -42,7 +54,7 @@ Email Address:
 Calculated MD5 hash:
 <input type="text" id='hash' name="hash" value="" style="width: 336px;">
 <p></p>
-<input type="button" name='go' value='lookup Gravatars' onclick="lookup()">
+<input type="button" name='go' value='Lookup' onclick="lookup()">
 </form>
 <div id='result'></div>
 </body>
